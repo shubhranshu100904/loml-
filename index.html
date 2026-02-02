@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For You | Valentine 2025</title>
+    
+    <!-- Typography: Editorial Serif + Clean Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- CORE VARIABLES --- */
+        :root {
+            --bg-color: #050505;
+            --text-main: #f0f0f0;
+            --text-muted: #888888;
+            --accent-glow: #ff2e63;
+            --accent-secondary: #08d9d6;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --font-serif: 'Playfair Display', serif;
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+            --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+        }
+
+        /* --- RESET & BASE --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            overflow-x: hidden;
+            width: 100vw;
+            min-height: 100vh;
+            cursor: none; /* Custom cursor implementation */
+        }
+
+        /* --- CINEMATIC GRAIN OVERLAY --- */
+        .noise-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 900;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* --- CUSTOM CURSOR --- */
+        .cursor-dot, .cursor-outline {
+            position: fixed;
+            top: 0; left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .cursor-dot { width: 5px; height: 5px; background-color: white; }
+        .cursor-outline {
+            width: 30px; height: 30px;
+            border: 1px solid rgba(255,255,255,0.5);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+        body:hover .cursor-outline { width: 50px; height: 50px; }
+
+        /* --- AMBIENT BACKGROUND GLOWS --- */
+        .gradient-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.4;
+            animation: float 10s ease-in-out infinite;
+        }
+        .orb-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--accent-glow), transparent); }
+        .orb-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: radial-gradient(circle, #4a00e0, transparent); animation-delay: -5s; }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, 50px); }
+        }
+
+        /* --- TYPOGRAPHY UTILS --- */
+        h1, h2, h3 { font-family: var(--font-serif); font-weight: 400; line-height: 1.1; }
+        .hero-text { font-size: clamp(3rem, 8vw, 8rem); letter-spacing: -0.03em; }
+        .sub-text { font-size: clamp(1rem, 2vw, 1.5rem); color: var(--text-muted); font-weight: 300; }
+        .accent { color: var(--accent-glow); font-style: italic; }
+
+        /* --- SECTIONS --- */
+        section {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero-content {
+            text-align: center;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1.5s var(--ease-out) forwards 0.5s;
+        }
+        
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards 2s;
+        }
+        .scroll-line {
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(to bottom, white, transparent);
+            margin-top: 10px;
+        }
+
+        /* --- MEMORY CARDS (Glassmorphism) --- */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            width: 100%;
+            max-width: 1200px;
+            perspective: 1000px;
+        }
+
+        .memory-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: transform 0.4s var(--ease-out), box-shadow 0.4s ease;
+            opacity: 0; /* JS handles reveal */
+            transform: translateY(50px);
+        }
+        
+        .memory-card:hover {
+            transform: translateY(-10px) rotateX(2deg);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        .card-img-placeholder {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(45deg, #1a1a1a, #2a2a2a);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #333;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* If user adds images */
+        .card-img-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        /* --- PROPOSAL SECTION --- */
+        .proposal-container {
+            text-align: center;
+            z-index: 10;
+        }
+        
+        .question-box {
+            background: rgba(20, 20, 20, 0.6);
+            padding: 4rem;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        .btn-group {
+            margin-top: 3rem;
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            position: relative;
+        }
+
+        button {
+            padding: 1rem 3rem;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            border: none;
+            cursor: none; /* Use custom cursor */
+            font-family: var(--font-sans);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-yes {
+            background: var(--text-main);
+            color: var(--bg-color);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-yes:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.4);
+        }
+
+        .btn-no {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        /* --- SUCCESS OVERLAY --- */
+        .success-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: black;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s ease;
+        }
+        
+        .success-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        
+        /* Mobile adjustment */
+        @media (max-width: 768px) {
+            .hero-text { font-size: 3.5rem; }
+            .question-box { padding: 2rem; width: 90%; }
+            .btn-group { flex-direction: column; gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- VISUAL FX -->
+    <div class="noise-overlay"></div>
+    <div class="gradient-orb orb-1"></div>
+    <div class="gradient-orb orb-2"></div>
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <!-- SCENE 1: THE INTRO -->
+    <section id="hero">
+        <div class="hero-content">
+            <p class="sub-text">Hey <span id="MY LOML"><!-- CUSTOMIZE: Name -->KOMAL</span>,</p>
+            <h1 class="hero-text">I WANT TO <br><span class="accent">TELL </span> U.</h1>
+        </div>
+        
+        <div class="scroll-indicator">
+            <span style="font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase;">Scroll Down</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- SCENE 2: THE JOURNEY -->
+    <section id="memories">
+        <div style="text-align: center; margin-bottom: 4rem;">
+            <h2 style="font-size: 3rem; margin-bottom: 1rem;">Just a few reasons...</h2>
+            <p class="sub-text">Why you are LOVE OF MY LIFE???.</p>
+        </div>
+
+        <div class="gallery-grid">
+            <!-- Card 1 -->
+            <div class="memory-card reveal">
+                <div class="card-img-placeholder">
+                    <!-- CUSTOMIZE: Replace src with your image URL -->
+                    <span>✨</span> 
+                    <!-- <img src="your-photo-1.jpg" alt="Memory"> -->
+                </div>
+                <h3>When i see u </h3>
+                <p style="margin-top: 0.5rem; color: #aaa; line-height: 1.6;">
+                    It is only u for me , and honestly, u r my favorite person in the world.
+                </p>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="memory-card reveal">
+                <div class="card-img-placeholder">
+                    <span>🌙</span>
+                    <!-- <img src="your-photo-2.jpg" alt="Memory"> -->
+                </div>
+                <h3>Our late night talks</h3>
+                <p style="margin-top: 0.5rem; color: #aaa; line-height: 1.6;">
+                    When the world is quiet and it's just us figuring out life together.
+                </p>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="memory-card reveal">
+                <div class="card-img-placeholder">
+                    <span>❤️</span>
+                    <!-- <img src="your-photo-3.jpg" alt="Memory"> -->
+                </div>
+                <h3>Just being you</h3>
+                <p style="margin-top: 0.5rem; color: #aaa; line-height: 1.6;">
+                    You make my life lightning I LOVE U  .
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCENE 3: THE PROPOSAL -->
+    <section id="proposal">
+        <div class="question-box">
+            <p class="sub-text" style="margin-bottom: 1rem; color: var(--accent-glow);">The Big Moment</p>
+            <h1 style="font-size: clamp(2rem, 5vw, 4rem); margin-bottom: 1rem;">WILL U BE MY  VALENTINE MY KUCHUMUCHUUU?</h1>
+            <p style="color: #888; margin-bottom: 2rem;">(There is only one right answer...)</p>
+            
+            <div class="btn-group">
+                <button class="btn-yes" id="yesBtn">Yes, absolutely!</button>
+                <button class="btn-no" id="noBtn">No</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCENE 4: CELEBRATION OVERLAY -->
+    <div class="success-overlay" id="successLayer">
+        <h1 style="font-size: 5rem; text-align: center; line-height: 1.1;">SHE SAID <br><span class="accent">YESSSS!</span></h1>
+        <p style="margin-top: 2rem; font-size: 1.2rem;">SEE U TONIGHT 💌</p>
+    </div>
+
+    <!-- SCRIPTS -->
+    <!-- Confetti Library for the celebration -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <script>
+        // --- CUSTOM CURSOR LOGIC ---
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+
+            // Add slight lag to outline for fluid feel
+            cursorOutline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        // --- SCROLL REVEAL ANIMATION ---
+        const observerOptions = { threshold: 0.1 };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // --- THE "NO" BUTTON GAME ---
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const proposalSection = document.getElementById('proposal');
+
+        // Initial state for No button
+        let isRunningAway = false;
+
+        const moveButton = () => {
+            // Calculate boundaries relative to the question box to keep it reachable but tricky
+            const containerRect = proposalSection.getBoundingClientRect();
+            const btnRect = noBtn.getBoundingClientRect();
+            
+            // Random position within a safe area
+            const maxOffset = 150; // pixels
+            const randomX = (Math.random() - 0.5) * maxOffset * 2;
+            const randomY = (Math.random() - 0.5) * maxOffset * 2;
+
+            noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
+            
+            // Funny text changes
+            const texts = ["Are you sure?", "Think again!", "Really?", "Don't do this!", "Click the other one!"];
+            noBtn.innerText = texts[Math.floor(Math.random() * texts.length)];
+        };
+
+        // Desktop Hover
+        noBtn.addEventListener('mouseover', moveButton);
+        // Mobile Touch
+        noBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Stop click
+            moveButton();
+        });
+
+
+        // --- THE "YES" CELEBRATION ---
+        yesBtn.addEventListener('click', () => {
+            const overlay = document.getElementById('successLayer');
+            overlay.classList.add('active');
+
+            // Trigger Confetti
+            const duration = 5 * 1000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 2000 };
+
+            function randomInRange(min, max) {
+              return Math.random() * (max - min) + min;
+            }
+
+            const interval = setInterval(function() {
+              const timeLeft = animationEnd - Date.now();
+
+              if (timeLeft <= 0) {
+                return clearInterval(interval);
+              }
+
+              const particleCount = 50 * (timeLeft / duration);
+              // distinct particles from two sides
+              confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+              confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        });
+
+    </script>
+</body>
+</html>
